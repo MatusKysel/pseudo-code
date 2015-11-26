@@ -5,7 +5,8 @@ The idea of this language is based on simple fact, that all algorithms are alrea
 ##PseduCode
 ####Basic Operation
 Like every language even ours PseudoCode supports basic arithmetic operation as ```+-/*```.
-Each vraiable must be defined this way ```var A as integer```, but currently we are supporting only integer, char and bool values. 
+Each vraiable must be defined this way ```var A as integer```, but currently we are supporting only integer, char and bool values.
+Arrays can be defined similary ```var A as array of integers = 1,2,3```
 ####Loops
 This language support two types of loops. The frist is ```repeat``` - ```until``` and basic ```for``` loops with syntax like that
 ```
@@ -48,18 +49,14 @@ print 'Hello World!'
 ```
 Next example is simple bubble sort on array of integers
 ```
-func bubbleSort( var A as array of integers )
-    n = length(A)
-    repeat
-       swapped = false
-       for i = 1 to n-1 inclusive do
-          if A[i-1] > A[i] then
-             swap(A[i-1], A[i])
-             swapped = true
-          end if
-       end for
-       n = n - 1
-    until not swapped
+func bubblesort( var a as array )
+    for i from 1 to N do
+        for j from 0 to N - 1
+           if a[j] > a[j + 1] then
+              swap( a[j], a[j + 1] )
+           end if
+        end if
+    end for   
 end func
 ```
 
