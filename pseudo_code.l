@@ -8,6 +8,8 @@
 %option noyywrap
 %option case-insensitive
 %option yylineno
+%option nounput
+%option noinput
 
 %x STRING
 %x COMMENT

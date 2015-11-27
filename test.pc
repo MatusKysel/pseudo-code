@@ -10,8 +10,5 @@ func main ()
 	read A
 	print "Enter B: "
 	read B
-	//swap(A,B)
-	//print A
-	//print 
 	print foo(A,B)
 end func

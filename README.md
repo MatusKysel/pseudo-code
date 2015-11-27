@@ -7,11 +7,11 @@ To build this interpreter just run bash script
 ``` ./make.bash ```
 
 ####Requirements
-For bulding is necessary flex and bison
+For building is necessary flex and bison
 
 ##PseduCode
 ####Basic Operation
-Like every language even ours PseudoCode supports basic arithmetic operation as ```+-/*```.
+Like every language even ours PseudoCode supports basic arithmetic operation as ```+-/*<>!=```.
 Each vraiable must be defined this way ```A```, but currently we are supporting only integer.
 Arrays can be defined similary ```A = 1,2,3```
 ####Loops

@@ -58,7 +58,6 @@ void FncList(Node *p){
 		return;
 	int i;
 	int j;
-	int k;
 	Function *tmp;
 	switch(p->type){
 		case tConst: 
@@ -142,11 +141,12 @@ void FncList(Node *p){
 						FncList(p->op.operands[2]);
 					break;
 				case FOR:
-					FncList(p->op.operands[1]);
-					j = *(int*)sp;
 					FncList(p->op.operands[2]);
-					k = *(int*)sp;
-					for(; j <= k; *(int*)(fp + p->op.operands[0]->var->index * sizeof(int)) = ++j) {
+					j = *(int*)sp;
+					FncList(p->op.operands[1]);
+					for(*(int*)(fp + p->op.operands[0]->var->index * sizeof(int)) = *(int*)sp; 
+						*(int*)(fp + p->op.operands[0]->var->index * sizeof(int)) <= j; 
+						++(*(int*)(fp + p->op.operands[0]->var->index * sizeof(int)))) {
 						FncList(p->op.operands[3]);
 					}
 					break;
@@ -174,6 +174,8 @@ void FncList(Node *p){
 		case tBlock: 
 			for(i = 0; i < p->block.n; i++)
 				FncList(p->block.statements[i]);
+			break;
+		default:
 			break;
 	}
 } 
