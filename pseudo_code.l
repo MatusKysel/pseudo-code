@@ -31,7 +31,7 @@
 "LEN"				{ return LEN; }
 "FUNC"				{ return FUNC; }
 "END FUNC"			{ return ENDFUNC; }
-"NEG"				{ return NEG; }
+"NOT"				{ return NOT; }
 [0-9]+				{ yylval.val = atoi(yytext); return INT; }
 [A-Z][A-Z0-9]*		{ yylval.var = StrToVar(yytext); return VAR; }
 [+\-*/(){};=,<>!]	{ return yytext[0]; }
@@ -41,7 +41,7 @@
 "//"				{ BEGIN(COMMENT); }
 <COMMENT>.+			{ ; }
 <COMMENT>\n			{ BEGIN(INITIAL); }
-.					{ ; }
 [\r{0,1}\n]+		{ return NEWLINE; }
-<<EOF>>				{ return NEWLINE; } //hack so you don't need to add newline after last statement
+<<EOF>>				{ return NEWLINE; }
+.					{ ; }
 %%

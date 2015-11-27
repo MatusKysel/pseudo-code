@@ -105,6 +105,10 @@ void FncList(Node *p){
 					FncList(p->op.operands[1]);//execute right half and have it stored at sp
 					*(int*)(fp + p->op.operands[0]->var->index * sizeof(int)) = *(int*)sp;
 					break;
+				case NOT: 
+					FncList(p->op.operands[0]);
+					*(int*)sp = !*(int*)sp;
+					break;
 				case PRINT: 
 					FncList(p->op.operands[0]);
 					if(p->op.operands[0]->type == tString)
