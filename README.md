@@ -52,8 +52,9 @@ print 'Hello World!'
 Next example is simple bubble sort on array of integers
 ```
 func bubblesort( a )
+	N = len(a)
     for i from 1 to N do
-        for j from 0 to N - 1
+        for j from 0 to N - 1 do
            if a[j] > a[j + 1] then
               swap( a[j], a[j + 1] )
            end if

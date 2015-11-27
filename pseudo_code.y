@@ -47,28 +47,28 @@ Node *MoreParam(Node *a, Node *b);
 %left '*' '/'
 %right NEG
 %%
-prog	: fn 					   						{ ; }
-	| prog fn  							   				{ ; }
+prog : fn NEWLINE						   						{ ; }
+	| prog fn NEWLINE 							   				{ ; }
 	;
-fn	: FUNC VAR '(' params ')' NEWLINE stmts ENDFUNC	NEWLINE			{ AddFn($2, $4, $7); }
+fn : FUNC VAR '(' params ')' NEWLINE stmts ENDFUNC				{ AddFn($2, $4, $7); }
 	;
-params	: 														{ $$ = 0; }
+params : 														{ $$ = 0; }
 	| VAR														{ $$ = 1; }
 	| params ',' VAR											{ $$ = $1 + 1; }
 	;
-stmts	: stmt 											{ $$ = $1; }
-	| stmts stmt 										{ $$ = Block($1, $2); }
+stmts : stmt NEWLINE											{ $$ = $1; }
+	| stmts stmt NEWLINE										{ $$ = Block($1, $2); }
 	;
-stmt	: VAR '=' exp NEWLINE 									{ $$ = Oper('=', 2, VarToNode($1), $3); }
-	| PRINT exp NEWLINE											{ $$ = Oper(PRINT, 1, $2); }
-	| SWAP '(' VAR ',' VAR ')' NEWLINE							{ $$ = Oper(SWAP, 2, VarToNode($3), VarToNode($5)); }
-	| LEN VAR NEWLINE											{ $$ = Oper(LEN, 1, $2); }
-	| PRINT STR NEWLINE											{ $$ = Oper(PRINT, 1, StrToNode($2)); }
-	| READ VAR NEWLINE											{ $$ = Oper(READ, 1, VarToNode($2)); }
-	| IF exp THEN NEWLINE stmt ENDIF NEWLINE					{ $$ = Oper(IF, 2, $2, $5); }
-	| IF exp THEN NEWLINE stmt ELSE stmt ENDIF NEWLINE 			{ $$ = Oper(ELSE, 3, $2, $5, $7); }
-	| FOR VAR FROM exp TO exp DO NEWLINE stmt ENDFOR NEWLINE 	{ $$ = Oper(FOR, 4, VarToNode($2), $4, $6, $9); }
-	| VAR '(' exps ')' NEWLINE 									{ $$ = Oper(FUNC, 2, VarToFnCall($1), $3); }
+stmt : VAR '=' exp  											{ $$ = Oper('=', 2, VarToNode($1), $3); }
+	| PRINT exp 												{ $$ = Oper(PRINT, 1, $2); }
+	| SWAP '(' VAR ',' VAR ')' 									{ $$ = Oper(SWAP, 2, VarToNode($3), VarToNode($5)); }
+	| LEN VAR 													{ $$ = Oper(LEN, 1, $2); }
+	| PRINT STR 												{ $$ = Oper(PRINT, 1, StrToNode($2)); }
+	| READ VAR 													{ $$ = Oper(READ, 1, VarToNode($2)); }
+	| IF exp THEN NEWLINE stmts ENDIF 							{ $$ = Oper(IF, 2, $2, $5); }
+	| IF exp THEN NEWLINE stmts ELSE NEWLINE stmts ENDIF  		{ $$ = Oper(ELSE, 3, $2, $5, $8); }
+	| FOR VAR FROM exp TO exp DO NEWLINE stmts ENDFOR  			{ $$ = Oper(FOR, 4, VarToNode($2), $4, $6, $9); }
+	| VAR '(' exps ')'  										{ $$ = Oper(FUNC, 2, VarToFnCall($1), $3); }
 	;
 exp	: INT														{ $$ = IntToNode($1); } 
 	| VAR														{ $$ = VarToNode($1); } //we can't create new one every time
@@ -87,7 +87,7 @@ exp	: INT														{ $$ = IntToNode($1); }
 	| NOT exp %prec NEG											{ $$ = Oper(NOT, 1, $2); }
 	| VAR '(' exps ')'											{ $$ = Oper(FUNC, 2, VarToFnCall($1), $3); }
 	;
-exps	: 														{ $$ = NodeToParam(NULL); }
+exps :  														{ $$ = NodeToParam(NULL); }
 	| exp														{ $$ = NodeToParam($1); }
 	| exps ',' exp												{ $$ = MoreParam($1, $3); }
 	;
@@ -96,6 +96,7 @@ void init(void){
 	var_count = 0;
 	variables = NULL;
 }
+
 VarNode *NewVar(char *name){
 	VarNode *v = malloc(sizeof(VarNode));
 	assert(v != NULL);
@@ -106,6 +107,7 @@ VarNode *NewVar(char *name){
 	variables[var_count - 1] = v;
 	return v;
 }
+
 VarNode *StrToVar(char *name){
 	int i;
 	for(i = 0; i < var_count; i++)
@@ -128,7 +130,7 @@ Node *Block(Node *a, Node *b){
 		assert(a->block.statements != NULL);
 		a->block.statements[a->block.n - 1] = b;
 		return a;
-	}else{
+	} else {
 		Node *p = malloc(sizeof(Node));
 		assert(p != NULL);
 		p->type = tBlock;
@@ -157,6 +159,7 @@ Node *Oper(int type, int n, ...){
 	va_end(args);
 	return p;
 }
+
 Node *IntToNode(int val){ 
 	Node *p = malloc(sizeof(Node));
 	assert(p != NULL);
@@ -164,6 +167,7 @@ Node *IntToNode(int val){
 	p->con.value = val;
 	return p;
 }
+
 Node *StrToNode(char *s){ 
 	Node *p = malloc(sizeof(Node));
 	assert(p != NULL);
@@ -171,6 +175,7 @@ Node *StrToNode(char *s){
 	p->str.s = s;
 	return p;
 }
+
 void AddFn(VarNode *var, int par_cnt, Node *body){
 	//printf("fn: %s\n", var->name);
 	Function *fn = malloc(sizeof(Function));
@@ -188,6 +193,7 @@ void AddFn(VarNode *var, int par_cnt, Node *body){
 	assert(functions != NULL);
 	functions[fn_count - 1] = fn;
 }
+
 Node *VarToFnCall(VarNode *var){
 	Node *p = malloc(sizeof(Node));
 	p->type = tFnCall;
@@ -202,6 +208,7 @@ Node *VarToNode(VarNode *var){
 	p->var = var;
 	return p;
 }
+
 Node *NodeToParam(Node *a){
 	Node *p = malloc(sizeof(Node));
 	assert(p != NULL);
@@ -217,6 +224,7 @@ Node *NodeToParam(Node *a){
 	}
 	return p;
 }
+
 Node *MoreParam(Node *a, Node *b){
 	int index = a->par.n++;
 	a->par.params = realloc(a->par.params, a->par.n * sizeof(void*));
@@ -256,6 +264,7 @@ void FreeNode(Node *p){
 	}
 	free(p);
 }
+
 void FreeVars(int var_count, VarNode **variables){
 	int i;
 	for(i = 0; i < var_count; i++){
@@ -266,11 +275,13 @@ void FreeVars(int var_count, VarNode **variables){
 	free(variables);
 	variables = NULL;
 }
+
 void FreeFunction(Function *fn){
 	FreeVars(fn->var_count, fn->variables);
 	FreeNode(fn->body);
 	free(fn);
 }
+
 void FreeFunctions(FnList *x){
 	int i;
 	for(i = 0; i < x->fn_count; i++)

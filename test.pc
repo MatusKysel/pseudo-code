@@ -10,5 +10,10 @@ func main ()
 	read A
 	print "Enter B: "
 	read B
-	foo (A,B)
+	if not (A > B) then
+		foo (A,B)
+	else
+		swap(A,B)
+		foo (A,B)
+	end if
 end func
