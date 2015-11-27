@@ -68,6 +68,7 @@ stmt	: VAR '=' exp NEWLINE									{ $$ = Oper('=', 2, VarToNode($1), $3); }
 	| IF exp THEN NEWLINE stmt ENDIF NEWLINE					{ $$ = Oper(IF, 2, $2, $5); }
 	| IF exp THEN NEWLINE stmt ELSE stmt ENDIF NEWLINE			{ $$ = Oper(ELSE, 3, $2, $5, $7); }
 	| FOR VAR FROM exp TO exp DO NEWLINE stmt ENDFOR NEWLINE	{ $$ = Oper(FOR, 4, VarToNode($2), $4, $6, $9); }
+	| VAR '(' exps ')' NEWLINE									{ $$ = Oper(FUNC, 2, VarToFnCall($1), $3); }
 	;
 exp	: INT														{ $$ = IntToNode($1); } 
 	| VAR														{ $$ = VarToNode($1); } //we can't create new one every time

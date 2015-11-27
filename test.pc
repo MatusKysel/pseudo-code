@@ -10,5 +10,5 @@ func main ()
 	read A
 	print "Enter B: "
 	read B
-	print foo(A,B)
+	foo (A,B)
 end func
