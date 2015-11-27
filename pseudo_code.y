@@ -36,13 +36,13 @@ Node *MoreParam(Node *a, Node *b);
 }
 
 %error-verbose
-%token SWAP READ PRINT IF ELSE ENDIF FUNC ENDFUNC FOR ENDFOR LEN THEN FROM TO NEWLINE
+%token SWAP READ PRINT IF ELSE ENDIF FUNC ENDFUNC FOR ENDFOR LEN THEN FROM TO DO NEWLINE NEQ EQ GEQ LEQ
 %token <val> INT
 %token <s> STR
 %token <var> VAR
 %type <node> stmts stmt exp exps
 %type <val> params
-
+%left '>' '<' ">=" "<=" "==" "!="
 %left '+' '-'
 %left '*' '/'
 %right NEG
@@ -61,10 +61,13 @@ stmts	: stmt													{ $$ = $1; }
 	;
 stmt	: VAR '=' exp NEWLINE									{ $$ = Oper('=', 2, VarToNode($1), $3); }
 	| PRINT exp NEWLINE											{ $$ = Oper(PRINT, 1, $2); }
+	| SWAP '(' VAR ',' VAR ')' NEWLINE							{ $$ = Oper(SWAP, 2, VarToNode($3), VarToNode($5)); }
+	| LEN VAR NEWLINE											{ $$ = Oper(LEN, 1, $2); }
 	| PRINT STR NEWLINE											{ $$ = Oper(PRINT, 1, StrToNode($2)); }
 	| READ VAR NEWLINE											{ $$ = Oper(READ, 1, VarToNode($2)); }
-	| IF exp stmt ENDIF	NEWLINE									{ $$ = Oper(IF, 2, $2, $3); }
-	| IF exp stmt ELSE stmt ENDIF NEWLINE						{ $$ = Oper(ELSE, 3, $2, $3, $5); }
+	| IF exp THEN NEWLINE stmt ENDIF NEWLINE					{ $$ = Oper(IF, 2, $2, $5); }
+	| IF exp THEN NEWLINE stmt ELSE stmt ENDIF NEWLINE			{ $$ = Oper(ELSE, 3, $2, $5, $7); }
+	| FOR VAR FROM exp TO exp DO NEWLINE stmt ENDFOR NEWLINE	{ $$ = Oper(FOR, 4, VarToNode($2), $4, $6, $9); }
 	;
 exp	: INT														{ $$ = IntToNode($1); } 
 	| VAR														{ $$ = VarToNode($1); } //we can't create new one every time
@@ -72,6 +75,12 @@ exp	: INT														{ $$ = IntToNode($1); }
 	| exp '-' exp 												{ $$ = Oper('-', 2, $1, $3); }
 	| exp '/' exp 												{ $$ = Oper('/', 2, $1, $3); }
 	| exp '*' exp 												{ $$ = Oper('*', 2, $1, $3); }
+	| exp '>' exp 												{ $$ = Oper('>', 2, $1, $3); }
+	| exp '<' exp 												{ $$ = Oper('<', 2, $1, $3); }
+	| exp ">=" exp 												{ $$ = Oper(GEQ, 2, $1, $3); }
+	| exp "<=" exp 												{ $$ = Oper(LEQ, 2, $1, $3); }
+	| exp "==" exp 												{ $$ = Oper(EQ, 2, $1, $3); }
+	| exp "!=" exp 												{ $$ = Oper(NEQ, 2, $1, $3); }
 	| '(' exp ')'												{ $$ = $2; }
 	| '-' INT %prec NEG											{ $$ = Oper(NEG, 1, IntToNode($2)); }
 	| NEG INT 													{ $$ = Oper(NEG, 1, IntToNode($2)); }
@@ -184,6 +193,7 @@ Node *VarToFnCall(VarNode *var){
 	p->var = var;
 	return p;
 }
+
 Node *VarToNode(VarNode *var){
 	Node *p = malloc(sizeof(Node));
 	assert(p != NULL);

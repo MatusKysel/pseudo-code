@@ -1,11 +1,17 @@
-func add (A, B)
-	add = A + B
+func foo (A, B)
+	for I from A to B do
+		print I
+	end for
+	foo = I
 end func
 
-func main()
+func main ()
 	print "Enter A: "
 	read A
 	print "Enter B: "
 	read B
-	print add(A, B)
+	//swap(A,B)
+	//print A
+	//print 
+	print foo(A,B)
 end func

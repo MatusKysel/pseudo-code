@@ -14,32 +14,32 @@
 
 %%
 
-"IF"		    { return IF; }
-"THEN"		    { return THEN; }
-"ELSE"		    { return ELSE; }
-"END IF"		{ return ENDIF; }
-"FOR"			{ return FOR; }
-"FROM"			{ return FROM; }
-"TO"			{ return TO; }
-"END FOR"		{ return ENDFOR; }
-"READ"			{ return READ; }
-"PRINT"			{ return PRINT; }
-"SWAP"			{ return SWAP; }
-"LEN"			{ return LEN; }
-"FUNC"			{ return FUNC; }
-"END FUNC"		{ return ENDFUNC; }
-"NEG"			{ return NEG; }
-[0-9]+			{ yylval.val = atoi(yytext); return INT; }
-[A-Z][A-Z0-9]*	{ yylval.var = StrToVar(yytext); return VAR; }
-[+\-*/(){};=,]	{ return yytext[0]; }
-\"				{ BEGIN(STRING); }
-<STRING>[^\"]+	{ yylval.s = strdup(yytext); return STR; }
-<STRING>\"		{ BEGIN(INITIAL); }
-"//"			{ BEGIN(COMMENT); }
-<COMMENT>.+		{ ; }
-<COMMENT>\n		{ BEGIN(INITIAL); }
-.				{ ; }
-[\r{0,1}\n]+	{ return NEWLINE; }
-<<EOF>>			{ return NEWLINE; }
-
+"IF"		    	{ return IF; }
+"THEN"		    	{ return THEN; }
+"ELSE"		    	{ return ELSE; }
+"END IF"			{ return ENDIF; }
+"FOR"				{ return FOR; }
+"FROM"				{ return FROM; }
+"TO"				{ return TO; }
+"DO"				{ return DO; }
+"END FOR"			{ return ENDFOR; }
+"READ"				{ return READ; }
+"PRINT"				{ return PRINT; }
+"SWAP"				{ return SWAP; }
+"LEN"				{ return LEN; }
+"FUNC"				{ return FUNC; }
+"END FUNC"			{ return ENDFUNC; }
+"NEG"				{ return NEG; }
+[0-9]+				{ yylval.val = atoi(yytext); return INT; }
+[A-Z][A-Z0-9]*		{ yylval.var = StrToVar(yytext); return VAR; }
+[+\-*/(){};=,<>!]	{ return yytext[0]; }
+\"					{ BEGIN(STRING); }
+<STRING>[^\"]+		{ yylval.s = strdup(yytext); return STR; }
+<STRING>\"			{ BEGIN(INITIAL); }
+"//"				{ BEGIN(COMMENT); }
+<COMMENT>.+			{ ; }
+<COMMENT>\n			{ BEGIN(INITIAL); }
+.					{ ; }
+[\r{0,1}\n]+		{ return NEWLINE; }
+<<EOF>>				{ return NEWLINE; } //hack so you don't need to add newline after last statement
 %%

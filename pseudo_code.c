@@ -24,8 +24,13 @@ Function *FindFunction(char *s){
 int Add(int *a, int *b) 	{ return *a + *b; }
 int Sub(int *a, int *b) 	{ return *a - *b; }
 int Mul(int *a, int *b)		{ return (*a) * (*b); }
-int Div(int *a, int *b)	{ return (*a) / (*b); }
-//int leq(int *a, int *b)		{ return (*a) <= (*b); }
+int Div(int *a, int *b)		{ return (*a) / (*b); }
+int leq(int *a, int *b)		{ return (*a) <= (*b); }
+int geq(int *a, int *b)		{ return (*a) >= (*b); }
+int eq(int *a, int *b)		{ return (*a) == (*b); }
+int neq(int *a, int *b)		{ return (*a) != (*b); }
+int les(int *a, int *b)		{ return (*a) < (*b); }
+int gre(int *a, int *b)		{ return (*a) > (*b); }
 
 void Op2(OpNode *op, int (*fn)(int *a, int *b))
 {
@@ -52,6 +57,8 @@ void FncList(Node *p){
 	if(p == NULL)
 		return;
 	int i;
+	int j;
+	int k;
 	Function *tmp;
 	switch(p->type){
 		case tConst: 
@@ -77,6 +84,24 @@ void FncList(Node *p){
 				case '/':
 					Op2(&p->op, Div);
 					break;
+				case '>':
+					Op2(&p->op, gre);
+					break;
+				case '<':
+					Op2(&p->op, les);
+					break;
+				case EQ:
+					Op2(&p->op, eq);
+					break;
+				case NEQ:
+					Op2(&p->op, neq);
+					break;
+				case GEQ:
+					Op2(&p->op, geq);
+					break;
+				case LEQ:
+					Op2(&p->op, leq);
+					break;
 				case '=':
 					FncList(p->op.operands[1]);//execute right half and have it stored at sp
 					*(int*)(fp + p->op.operands[0]->var->index * sizeof(int)) = *(int*)sp;
@@ -87,6 +112,18 @@ void FncList(Node *p){
 						printf("%s\n", *(char**)sp);
 					else
 						printf("%d\n", *(int*)sp);
+					break;
+				case SWAP: 
+					if(p->op.operands[0]->type == tVar && p->op.operands[1]->type == tVar) {
+						i = p->op.operands[0]->var->index;
+						p->op.operands[0]->var->index = p->op.operands[1]->var->index;
+						p->op.operands[1]->var->index = i;
+					} else {
+						printf("Swap is only for variables!!!\n");
+					}
+					break;
+				case LEN: 
+					printf("Uniplemented");
 					break;
 				case READ:
 					fgets(buf, BUFSIZE, stdin);
@@ -103,6 +140,15 @@ void FncList(Node *p){
 						FncList(p->op.operands[1]);
 					else
 						FncList(p->op.operands[2]);
+					break;
+				case FOR:
+					FncList(p->op.operands[1]);
+					j = *(int*)sp;
+					FncList(p->op.operands[2]);
+					k = *(int*)sp;
+					for(; j <= k; *(int*)(fp + p->op.operands[0]->var->index * sizeof(int)) = ++j) {
+						FncList(p->op.operands[3]);
+					}
 					break;
 				case FUNC:
 					tmp = FindFunction(p->op.operands[0]->var->name);
