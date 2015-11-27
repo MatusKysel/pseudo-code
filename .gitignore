@@ -1,7 +1,6 @@
 # Project files
-# executable hack
-* #ignore everything
-!*.* #unignore with extensions 
+*
+!*.*
 *.tab.*
 *.yy.*
 

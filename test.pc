@@ -1,0 +1,11 @@
+func add (A, B)
+	add = A + B
+end func
+
+func main()
+	print "Enter A: "
+	read A
+	print "Enter B: "
+	read B
+	print add(A, B)
+end func

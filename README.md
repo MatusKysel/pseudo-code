@@ -2,6 +2,13 @@
 Interpreter for course - Analysis of Programing Languagues.
 The idea of this language is based on simple fact, that all algorithms are already written in some kind of pseudo code, so why do not write a simple interpreter for that.
 
+##Build
+To build this interpreter just run bash script
+```./make.bash```
+
+####Requirements
+For bulding is necessary flex and bison
+
 ##PseduCode
 ####Basic Operation
 Like every language even ours PseudoCode supports basic arithmetic operation as ```+-/*```.
@@ -59,5 +66,6 @@ func bubblesort( var a as array )
     end for   
 end func
 ```
+
 
 
