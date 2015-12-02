@@ -48,6 +48,7 @@ Node *MoreParam(Node *a, Node *b);
 %right NEG
 %%
 prog : fn                                                       { ; }
+    | fn NEWLINE                                                { ; }
     | fn NEWLINE prog                                           { ; }
     ;
 fn  : FUNC VAR '(' params ')' NEWLINE stmts ENDFUNC             { AddFn($2, $4, $7); }

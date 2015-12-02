@@ -6,8 +6,7 @@ func foo (A, B)
 end func
 
 func main ()
-  A = 5
-	//print "Enter A: "
+	print "Enter A: "
 	read A
 	print "Enter B: "
 	read B
