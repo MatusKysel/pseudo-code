@@ -1,0 +1,9 @@
+func foo (c)
+  print c
+end func
+
+func main ()
+  c = 10
+  print c
+  foo(c)
+end func
