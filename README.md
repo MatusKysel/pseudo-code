@@ -9,7 +9,7 @@ To build this interpreter just run bash script
 ####Requirements
 For building is necessary flex and bison
 
-##PseduCode
+##PseudoCode
 ####Basic Operation
 Like every language even ours PseudoCode supports basic arithmetic operation as ```+-/*<>!=```.
 Each vraiable must be defined this way ```A```, but currently we are supporting only integer.
