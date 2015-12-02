@@ -1,0 +1,6 @@
+func main ()
+  A[] = 1, 2, 3, 4
+  for I from 0 to 3 do
+    print A[I]
+  end for
+end func
