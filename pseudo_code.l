@@ -34,7 +34,7 @@
 "NOT"               { return NOT; }
 [0-9]+              { yylval.val = atoi(yytext); return INT; }
 [A-Z][A-Z0-9]*      { yylval.var = StrToVar(yytext); return VAR; }
-[+\-*/(){};=,<>!]   { return yytext[0]; }
+[+\-*/(){};=,<>!\[\]]   { return yytext[0]; }
 \"                  { BEGIN(STRING); }
 <STRING>[^\"]+      { yylval.s = strdup(yytext); return STR; }
 <STRING>\"          { BEGIN(INITIAL); }

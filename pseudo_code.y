@@ -26,6 +26,9 @@ Node *VarToFnCall(VarNode *var);
 Node *VarToNode(VarNode *var);
 Node *NodeToParam(Node *a);
 Node *MoreParam(Node *a, Node *b);
+Node *InitializeArray(VarNode *a, Node *b);
+Node *AddArrayElement(Node *a, Node *b);
+Node *ParseInts(Node *a, Node *b, int c);
 %}
 
 %union{
@@ -36,11 +39,11 @@ Node *MoreParam(Node *a, Node *b);
 }
 
 %error-verbose
-%token SWAP READ PRINT IF ELSE ENDIF FUNC ENDFUNC FOR ENDFOR LEN THEN FROM TO DO NEWLINE NEQ EQ GEQ LEQ NOT
+%token SWAP READ PRINT IF ELSE ENDIF FUNC ENDFUNC FOR ENDFOR LEN THEN FROM TO DO NEWLINE NEQ EQ GEQ LEQ NOT ARRAY
 %token <val> INT
 %token <s> STR
-%token <var> VAR
-%type <node> stmts stmt exp exps
+%token <var> VAR 
+%type <node> stmts stmt exp exps array ints
 %type <val> params
 %left '>' '<' ">=" "<=" "==" "!="
 %left '+' '-'
@@ -61,9 +64,10 @@ stmts : stmt NEWLINE                                            { $$ = $1; }
     | stmts stmt NEWLINE                                        { $$ = Block($1, $2); }
     ;
 stmt : VAR '=' exp                                              { $$ = Oper('=', 2, VarToNode($1), $3); }
+	| VAR '=' ints                                              { $$ = InitializeArray($1, $3); }
+    | array '=' exp                                             { $$ = Oper('=', 2, $1, $3); }
     | PRINT exp                                                 { $$ = Oper(PRINT, 1, $2); }
-    | SWAP '(' VAR ',' VAR ')'                                  { $$ = Oper(SWAP, 2, VarToNode($3), VarToNode($5)); }
-    | LEN VAR                                                   { $$ = Oper(LEN, 1, $2); }
+    | SWAP '(' exp ',' exp ')'                                  { $$ = Oper(SWAP, 2, $3, $5); }
     | PRINT STR                                                 { $$ = Oper(PRINT, 1, StrToNode($2)); }
     | READ VAR                                                  { $$ = Oper(READ, 1, VarToNode($2)); }
     | IF exp THEN NEWLINE stmts ENDIF                           { $$ = Oper(IF, 2, $2, $5); }
@@ -71,7 +75,8 @@ stmt : VAR '=' exp                                              { $$ = Oper('=',
     | FOR VAR FROM exp TO exp DO NEWLINE stmts ENDFOR           { $$ = Oper(FOR, 4, VarToNode($2), $4, $6, $9); }
     | VAR '(' exps ')'                                          { $$ = Oper(FUNC, 2, VarToFnCall($1), $3); }
     ;
-exp : INT                                                       { $$ = IntToNode($1); } 
+exp : INT                                                       { $$ = IntToNode($1); }
+    | array 													{ $$ = $1; } 
     | VAR                                                       { $$ = VarToNode($1); } //we can't create new one every time
     | exp '+' exp                                               { $$ = Oper('+', 2, $1, $3); }
     | exp '-' exp                                               { $$ = Oper('-', 2, $1, $3); }
@@ -87,11 +92,17 @@ exp : INT                                                       { $$ = IntToNode
     | '-' INT %prec NEG                                         { $$ = Oper(NEG, 1, IntToNode($2)); }
     | NOT exp %prec NEG                                         { $$ = Oper(NOT, 1, $2); }
     | VAR '(' exps ')'                                          { $$ = Oper(FUNC, 2, VarToFnCall($1), $3); }
+    | LEN '(' VAR ')'                                           { $$ = Oper(LEN, 1, VarToNode($3)); }
     ;
 exps :                                                          { $$ = NodeToParam(NULL); }
     | exp                                                       { $$ = NodeToParam($1); }
     | exps ',' exp                                              { $$ = MoreParam($1, $3); }
     ;
+array : VAR '[' exp ']'											{ $$ = Oper(ARRAY, 2, VarToNode($1), $3); }
+	;
+ints : INT ',' ints                                             { $$ = ParseInts(IntToNode($1), $3, 1); }
+     | INT ',' INT                                              { $$ = ParseInts(IntToNode($1), IntToNode($3), 0); }
+     ;
 %%
 void init(void){
     var_count = 0;
@@ -103,6 +114,7 @@ VarNode *NewVar(char *name){
     assert(v != NULL);
     v->name = strdup(name);
     v->index = var_count++;
+    v->len = 1;
     variables = realloc(variables, var_count * sizeof(void*));
     assert(variables != NULL);
     variables[var_count - 1] = v;
@@ -112,10 +124,36 @@ VarNode *NewVar(char *name){
 VarNode *StrToVar(char *name){
     int i;
     for(i = 0; i < var_count; i++)
-        if(strcasecmp(variables[i]->name, name) == 0){
+        if(strcasecmp(variables[i]->name, name) == 0) { 
             return variables[i];
         }   
     return NewVar(name);
+}
+
+Node *ParseInts(Node *a, Node *b, int c) {
+	if(c) {                      
+        return AddArrayElement(a, b);
+    } else {
+        return AddArrayElement(a, NodeToParam(b));
+    }
+}
+
+Node *InitializeArray(VarNode *a, Node *b) {
+  if(a->len != 1){
+    printf("array %s has been already initialized\n", a->name);
+    exit(0);    
+  }
+  int i;
+  Node *block;
+  int str_length = strlen(a->name) + 10;
+  char *str = malloc(sizeof(char) * str_length); 
+  for( i = 0; i < b->par.n; ++i) {
+    sprintf(str, "%d%s", i, a->name);
+    block = Block(block, Oper('=', 2, VarToNode(StrToVar(str)), b->par.params[b->par.n - i -1 ]));
+  }
+  a->len = b->par.n;
+  free(str);
+  return block;
 }
 
 Node *Block(Node *a, Node *b){ 
@@ -178,16 +216,12 @@ Node *StrToNode(char *s){
 }
 
 void AddFn(VarNode *var, int par_cnt, Node *body){
-    //printf("fn: %s\n", var->name);
     Function *fn = malloc(sizeof(Function));
     fn->name = strdup(var->name);
     fn->param_count = par_cnt;
     fn->body = body;
     fn->var_count = var_count;
     fn->variables = variables;
-    /*int i;
-    for(i = 0; i < var_count; i++)
-        printf("%s\n", variables[i]->name);*/
     init(); 
     fn_count++;
     functions = realloc(functions, fn_count * sizeof(void*));
@@ -217,7 +251,7 @@ Node *NodeToParam(Node *a){
     if(a == NULL){
         p->par.n = 0;
         p->par.params = NULL;
-    }else{
+    } else {
         p->par.n = 1;
         p->par.params = malloc(sizeof(void*));
         assert(p->par.params != NULL);
@@ -232,6 +266,14 @@ Node *MoreParam(Node *a, Node *b){
     assert(a->par.params != NULL);
     a->par.params[index] = b;
     return a;
+}
+
+Node *AddArrayElement(Node *a, Node *b) {
+    int index = b->par.n++;
+    b->par.params = realloc(b->par.params, b->par.n * sizeof(void*));
+    assert(b->par.params != NULL);
+    b->par.params[index] = a;
+    return b;
 }
 
 void yyerror(const char *s){

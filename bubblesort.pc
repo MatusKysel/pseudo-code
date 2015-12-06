@@ -1,0 +1,22 @@
+func main ()
+	A = 4, 3, 2, 1
+
+	for I from 1 to len(A) do
+		print A[I]
+	end for
+
+	for z from 1 to len(A) do
+        for j from 1 to len(A) - 1 do
+           if A[j] > A[j + 1] then
+              swap( A[j], A[j + 1] )
+           end if
+        end for
+    end for  
+
+	print "       "
+
+	for I from 1 to len(A) do
+		print A[I]
+	end for
+
+end func
