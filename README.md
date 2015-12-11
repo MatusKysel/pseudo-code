@@ -49,19 +49,19 @@ end func
 This language support just basic ```if``` and ```else``` condtion with syntax like that
 ```
 func main ()
-if A > B then      
-    //DO SOMETHING
-end if
+  if A > B then      
+      //DO SOMETHING
+  end if
 end func
 ```
 or example of if-else statement
 ```
 func main ()
-if A > B then      
-    //DO SOMETHING
-else
-    //DO SOMETHING ELSE
-end if
+  if A > B then      
+      //DO SOMETHING
+  else
+      //DO SOMETHING ELSE
+  end if
 end func
 ```
 
@@ -79,19 +79,19 @@ The following functions are natively built in Pseudo-Code
 #####void swap(var, var) 
 ```
 func main ()
-a=5
-b=6
+  a=5
+  b=6
 swap(a, b)
-print a // 6
-print b // 5 
+  print a // 6
+  print b // 5 
 end func
 ```
 
 #####int len(array)
 ```
 func main ()
-A=1,2,3,4,5,6
-print len(A) // 6
+  A=1,2,3,4,5,6
+  print len(A) // 6
 end func
 ```
 
@@ -100,7 +100,7 @@ end func
 As for every language let's start with the most important
 ```
 func main ()
-print 'Hello World!'
+  print 'Hello World!'
 end func
 ```
 
