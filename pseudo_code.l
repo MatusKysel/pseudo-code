@@ -40,7 +40,7 @@
 <STRING>\"          { BEGIN(INITIAL); }
 "//"                { BEGIN(COMMENT); }
 <COMMENT>.+         { ; }
-<COMMENT>\n         { BEGIN(INITIAL); }
+<COMMENT>(\r?\n)    { BEGIN(INITIAL); return NEWLINE; }
 (\r?\n)+            { return NEWLINE; }
 .                   { ; }
 %%

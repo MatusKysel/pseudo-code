@@ -64,7 +64,7 @@ stmts : stmt NEWLINE                                            { $$ = $1; }
     | stmts stmt NEWLINE                                        { $$ = Block($1, $2); }
     ;
 stmt : VAR '=' exp                                              { $$ = Oper('=', 2, VarToNode($1), $3); }
-	| VAR '=' ints                                              { $$ = InitializeArray($1, $3); }
+	  | VAR '=' ints                                              { $$ = InitializeArray($1, $3); }
     | array '=' exp                                             { $$ = Oper('=', 2, $1, $3); }
     | PRINT exp                                                 { $$ = Oper(PRINT, 1, $2); }
     | SWAP '(' exp ',' exp ')'                                  { $$ = Oper(SWAP, 2, $3, $5); }
@@ -144,7 +144,7 @@ Node *InitializeArray(VarNode *a, Node *b) {
     exit(0);    
   }
   int i;
-  Node *block;
+  Node *block = NULL;
   int str_length = strlen(a->name) + 10;
   char *str = malloc(sizeof(char) * str_length); 
   for( i = 0; i < b->par.n; ++i) {
