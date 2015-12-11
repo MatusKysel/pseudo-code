@@ -79,19 +79,21 @@ The following functions are natively built in Pseudo-Code
 #####void swap(var, var) 
 ```
 func main ()
-  a=5
-  b=6
+  a = 5
+  b = 6
   swap(a, b)
   print a // 6
   print b // 5 
 end func
 ```
 
-#####int len(array)
+#####int len(array/variable)
 ```
 func main ()
-  A=1,2,3,4,5,6
+  A = 1,2,3,4,5,6
   print len(A) // 6
+  B = 0
+  print len(B) // 1
 end func
 ```
 
@@ -121,7 +123,7 @@ Next example is simple bubble sort on array of integers
 func bubblesort( a )
 	N = len(a)
     for i from 1 to N do
-        for j from 0 to N - 1 do
+        for j from 1 to N - 1 do
            if a[j] > a[j + 1] then
               swap( a[j], a[j + 1] )
            end if
