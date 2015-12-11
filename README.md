@@ -81,7 +81,7 @@ The following functions are natively built in Pseudo-Code
 func main ()
   a=5
   b=6
-swap(a, b)
+  swap(a, b)
   print a // 6
   print b // 5 
 end func
