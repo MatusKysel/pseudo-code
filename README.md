@@ -1,23 +1,23 @@
-#Pseudo-Code
+# Pseudo-Code
 Interpreter for course - Analysis of Programing Languagues.
 The idea of this language is based on simple fact, that all algorithms are already written in some kind of pseudo code, so why do not write a simple interpreter for that.
 
-##Build
+## Build
 To build this interpreter just run bash script
 ``` ./make.bash ```
 
-####Requirements
+#### Requirements
 For building is necessary flex and bison.
 Current code is supported only by GNU/Linux and Mac OS X operating systems.
 
-##Usage
+## Usage
 The starting point of every code is the main function, which is mandatory.
 
-####Basic Operations
+#### Basic Operations
 Like every language even ours Pseudo-Code supports basic arithmetic operation as ```+-/*<>!=```.
 Each variable must be defined this way ```A``` and currently we are supporting only integers.
 
-####Arrays
+#### Arrays
 Arrays are indexed from 1 and can be defined by the following way
 ```
 func main ()
@@ -35,7 +35,7 @@ func main ()
 end func 
 ```
 
-####Loops
+#### Loops
 This language support only one type of loops. It's basic ```for``` loops with syntax like that
 ```
 func main ()
@@ -45,7 +45,7 @@ func main ()
 end func
 ```
 
-####Conditions
+#### Conditions
 This language support just basic ```if``` and ```else``` condtion with syntax like that
 ```
 func main ()
@@ -65,7 +65,7 @@ func main ()
 end func
 ```
 
-####Functions
+#### Functions
 Functions are defined just with special keyword ```func``` and every function must be ended with function ending ```end func```. Return variable has the same name as function. Here is a simple example
 ```
 func foo( A )
@@ -73,10 +73,10 @@ func foo( A )
 end func
 ```
 
-####Built-in functions
+#### Built-in functions
 The following functions are natively built in Pseudo-Code
 
-#####void swap(var, var) 
+##### void swap(var, var) 
 ```
 func main ()
   a = 5
@@ -87,7 +87,7 @@ func main ()
 end func
 ```
 
-#####int len(array/variable)
+##### int len(array/variable)
 ```
 func main ()
   A = 1,2,3,4,5,6
@@ -97,7 +97,7 @@ func main ()
 end func
 ```
 
-####Examples
+#### Examples
 
 As for every language let's start with the most important
 ```
